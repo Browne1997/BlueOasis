@@ -12,7 +12,7 @@
 
 - Notes: Splitting strategy, model architecture reasoning, limitations.
 
-## 🚀 How to run
+## 🚀 How to run web application
 Utilising GitHub Codespace - pull the repository 'locally' 
 
 Check / Install dependencies:
@@ -28,3 +28,14 @@ pip install -t requirements.txt
 ### Run the app:
 > streamlit run src/app.py
 Open the link Streamlit prints (usually http://localhost:8501) in your browser.
+
+### ✨ Web Application Features included
+File selector for .wav files in data/raw/.
+
+Waveform visualization.
+
+Spectrogram (STFT in dB).
+
+MFCC feature visualization.
+
+Audio playback in browser.
