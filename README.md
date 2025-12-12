@@ -6,6 +6,8 @@ Pipeline
 - convert .flac to raw uncompressed .wav files (preprocessing step)
 - convert raw .wav into MFCC features (or spectrograms)
   - 2D vector array of time and feature - treat as a sequence of feature vectors like a spectrogram "image"
+
+## Model Architecture 
 - Use a CNN based architecture
   - Treat MFCCs/spectrograms as 2D images
   - CNNs learn local patterns (e.g. harmonic, formants) for audio classification
@@ -13,8 +15,17 @@ Pipeline
 Or use a Transformers (e.g. AST) to handle long-rage dependencies but heavier computational requirements
 Or use RRNs treat the MFCCs as a time series of feature vectors - good for handling temporal dynamics matter (event detection)
 
+model.py:
+📝 Notes
+Input shape: MFCCs are 2D arrays (coefficients × time). We treat them as grayscale images with one channel.
+Conv layers: Learn local spectral patterns.
+Pooling: Reduces dimensionality and captures invariances.
+Fully connected layers: Map learned features to class probabilities.
+Adjust dimensions: The fc1 input size depends on your MFCC shape — you’ll need to calculate (n_mfcc//pool_factor) × (time_frames//pool_factor) based on your preprocessing.
+
 Decision reasoning:
-I preprocess raw .wav files into MFCCs and spectrograms. These 2D feature representations are well‑suited for convolutional neural networks, which can learn local spectral patterns. For tasks requiring temporal modeling, I would extend this with recurrent layers or consider transformer architectures. For deployment, I would prioritize lightweight CNNs to balance accuracy and efficiency.
+I preprocess raw .wav files into MFCCs and spectrograms. These 2D feature representations are well‑suited for convolutional neural networks, which can learn local spectral patterns. For tasks requiring temporal modeling, I would extend this with recurrent layers or consider transformer architectures. For deployment, I would prioritize lightweight CNNs to balance accuracy and efficiency. In model.py I chose a CNN architecture because spectrograms/MFCCs resemble images, and CNNs are effective at learning local spectral features. For deployment, this architecture can be scaled down (MobileNet‑style) or extended with recurrent layers for temporal modeling.
+
 ## 📝 README outline
 - Project overview: Acoustic ML pipeline demo for job application.
 
