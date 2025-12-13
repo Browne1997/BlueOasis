@@ -81,3 +81,80 @@ Model input → MFCCs are fed into your CNN/RNN/Transformer as tensors.
 Training → model learns to map MFCC patterns → labels.
 
 Evaluation → accuracy, confusion matrix, etc.
+
+
+## 🔎 Loading & Exploring
+This is your exploratory data analysis (EDA) stage:
+
+Load audio files with librosa or torchaudio.
+
+Inspect metadata (esc50.csv) → check class distribution, folds, clip durations.
+
+Visualize:
+
+Waveforms (time domain).
+
+Spectrograms (frequency domain).
+
+Histograms of clip lengths or class counts.
+
+Document issues:
+
+Are some clips noisy, clipped, or silent?
+
+Are classes imbalanced (ESC‑50 has 40 clips per class, so it’s balanced — but note if you subset)?
+Any sample rate inconsistencies? (ESC‑50 is standardized at 44.1 kHz, so you can mention that).
+
+##⚙️ Preprocessing → ML Features
+This is the feature engineering stage:
+
+Convert raw .wav → MFCCs (or Mel spectrograms).
+
+Normalize features (per‑clip mean/variance).
+
+Pad or truncate to fixed length (ESC‑50 clips are all 5s, so you’re safe).
+
+Save features into data/processed/ for reuse.
+
+👉 For CNNs: treat MFCCs or spectrograms as 2D “images” (coefficients × time). 👉 For RNNs/Transformers: treat MFCCs as sequential feature vectors over time.
+
+### preprocessing script
+✅ What this script does
+Loads metadata (esc50.csv) and prints dataset stats.
+
+Explores: class distribution, clip durations, sample rates.
+
+Loads audio: returns waveform + sample rate.
+
+Extracts features: spectrograms and MFCCs.
+
+Documents: ESC‑50 is balanced (40 clips per class), clips are 5s long, sample rate is 44.1 kHz.
+
+### visualisation script 
+✅ What this gives you
+File‑level exploration: Waveform, spectrogram, MFCC plots.
+
+Dataset‑level exploration: Class distribution and duration histograms.
+
+Reusable functions: Can be imported into app.py for interactive visualization.
+
+### app script 
+✅ What’s this gives you
+Uses metadata (esc50.csv) to list files instead of scanning the folder.
+
+Imports functions from preprocessing.py and visualization.py to keep code modular.
+
+Adds dataset-level plots: class distribution and clip duration histograms.
+
+Interactive file selector: lets you pick a clip, play it, and see waveform, spectrogram, and MFCCs.
+
+Random Sample button: Picks a random file from the dataset when clicked.
+
+Keeps the dropdown for manual selection, but adds a quick way to explore.
+
+Displays the filename above the audio player so you know what you’re listening to.
+
+To run app 
+> streamlit run src/app.py
+in browser run:
+http://localhost:8501
