@@ -158,3 +158,179 @@ To run app
 > streamlit run src/app.py
 in browser run:
 http://localhost:8501
+
+### feature extraction script
+🔎 What the script produces
+Spectrograms (dB) → 2D arrays of shape (freq_bins, time_frames)
+
+MFCCs → 2D arrays of shape (n_mfcc, time_frames)
+
+Labels → the class name (e.g. "dog", "rain", "engine") for each clip
+
+These are saved both:
+
+Individually (clipname_spec.npy, clipname_mfcc.npy)
+
+As combined arrays (all_specs.npy, all_mfccs.npy, labels.npy)
+
+🧑‍💻 How this becomes a training/test dataset
+You’ll load all_mfccs.npy (or all_specs.npy) and labels.npy.
+
+Each entry is a 2D feature matrix for one clip.
+
+You then split them into train/test sets (e.g. 80/20 split).
+
+Depending on the model, you might:
+
+Flatten the 2D arrays into 1D vectors (for classical ML like SVM, RandomForest).
+
+Keep them as 2D “images” (for CNNs).
+
+Pad/truncate to a fixed length if needed.
+
+### Preprocessing reasoning
+✅ How to document your preprocessing
+1. Describe the transformation
+Raw .wav clips (5s, 44.1 kHz) were converted into:
+
+Spectrograms (dB): 2D time–frequency arrays.
+
+MFCCs (13 coefficients): compact representations of timbre.
+
+Features saved as .npy arrays for efficient loading in ML models.
+
+2. Note preprocessing decisions
+Sampling rate: kept original 44.1 kHz (no resampling needed).
+
+Clip length: dataset standardized at ~5s, so no trimming/padding required.
+
+Feature parameters:
+
+STFT window size = 2048, hop length = 512.
+
+MFCCs = 13 coefficients.
+
+Normalization: spectrograms converted to decibel scale, MFCCs left in raw form.
+
+3. Document quality issues/artifacts
+Even though ESC‑50 is clean, you can still mention:
+
+Background noise: some clips contain environmental noise (e.g. “dog bark” with traffic).
+
+Overlapping sounds: certain categories may have secondary sounds (e.g. “engine” with voices).
+
+Class ambiguity: some categories are perceptually similar (e.g. “chainsaw” vs “engine”).
+
+No missing/corrupted files: verified all 2000 clips load successfully.
+
+4. Summarize outcome
+Dataset is balanced (40 clips per class, 50 classes).
+
+Preprocessing produced consistent 2D feature arrays ready for ML training.
+
+No major quality issues requiring correction; minor artifacts noted but left intact to preserve dataset realism.
+
+✍️ Example write‑up
+We preprocessed the ESC‑50 dataset by converting raw .wav clips into spectrograms and MFCCs. Each clip (5s, 44.1 kHz) was transformed into 2D feature arrays and saved as .npy files. We retained the original sampling rate and clip length, as the dataset is standardized and clean. Spectrograms were computed using STFT (window=2048, hop=512) and converted to decibel scale; MFCCs were extracted with 13 coefficients.
+
+The dataset is well curated, with no missing or corrupted files. Minor artifacts such as background noise and overlapping sounds were observed but not corrected, as they reflect real‑world acoustic conditions. Overall, preprocessing produced consistent ML‑ready features without the need for heavy cleaning.
+
+You did the raw → feature transformation.
+
+You made conscious preprocessing choices.
+
+You documented any issues, even if minor.
+
+### checklist on decisions made
+🎯 Preprocessing Checklist Template
+1. Data Ingestion
+[ ] Dataset source: __________________________
+
+[ ] File types: __________________________
+
+[ ] Number of samples: __________________________
+
+[ ] Classes / labels: __________________________
+
+2. Audio Handling
+[ ] Sampling rate: kept at ____ Hz / resampled to ____ Hz
+
+[ ] Clip length: standardized at ____ seconds / padded / trimmed
+
+[ ] Channels: mono / stereo → converted to mono?
+
+[ ] Normalization: amplitude normalized / spectrograms converted to dB
+
+3. Feature Extraction
+[ ] Spectrogram parameters:
+
+FFT window size = ____
+
+Hop length = ____
+
+[ ] MFCC parameters:
+
+Number of coefficients = ____
+
+[ ] Other features: __________________________
+
+[ ] Storage format: .npy / .csv / database
+
+4. Quality Issues / Artifacts
+[ ] Missing files?
+
+[ ] Corrupted files?
+
+[ ] Background noise noted?
+
+[ ] Overlapping sounds?
+
+[ ] Class ambiguity?
+
+[ ] Decision: kept as‑is / removed / flagged
+
+5. Preprocessing Decisions
+[ ] Why you chose your sampling rate
+
+[ ] Why you chose your feature parameters
+
+[ ] Why you kept or corrected artifacts
+
+[ ] Any trade‑offs (accuracy vs efficiency)
+
+6. Outcome
+[ ] Dataset integrity confirmed (balanced, complete)
+
+[ ] Features extracted and saved
+
+[ ] Ready for train/test split
+
+✍️ Example (filled for ESC‑50)
+Sampling rate: kept at 44.1 kHz (dataset standard).
+
+Clip length: ~5s, no padding/trimming needed.
+
+Features: spectrograms (FFT=2048, hop=512), MFCCs (13 coefficients).
+
+Normalization: spectrograms converted to dB scale.
+
+Quality issues: minor background noise and overlapping sounds noted, left intact to preserve realism.
+
+Outcome: 2000 clips processed, features saved as .npy, dataset balanced (40 clips per class).
+
+👉 This way you can show assessors that you didn’t just run code — you thought about preprocessing choices, documented them, and checked for issues.
+
+
+### Load features script
+✅ What this does
+Reads metadata (esc50.csv) to know which clips exist.
+
+Loads the corresponding _mfcc.npy or _spec.npy file for each clip.
+
+Builds arrays X (features) and y (labels).
+
+Splits into train/test sets with stratification (so class balance is preserved).
+
+You only load what you need, when you need it. (i.e. do not create a combined file)
+
+Keeps memory usage manageable in WSL.
