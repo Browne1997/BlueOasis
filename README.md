@@ -66,3 +66,18 @@ Spectrogram (STFT in dB).
 MFCC feature visualization.
 
 Audio playback in browser.
+
+
+Raw audio (.wav) → load with librosa or torchaudio.
+
+Feature extraction → compute MFCCs (or spectrograms).
+
+Dataset pairing → each MFCC array is paired with its label (e.g. class ID).
+
+Data split → train/validation/test sets (careful to avoid leakage).
+
+Model input → MFCCs are fed into your CNN/RNN/Transformer as tensors.
+
+Training → model learns to map MFCC patterns → labels.
+
+Evaluation → accuracy, confusion matrix, etc.
