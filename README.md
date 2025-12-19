@@ -49,7 +49,7 @@ data/processed/features/
 ```
 6. (Optional) Test the model with dummy + real MFCCs
 ```bash
-python src/train_dummy.py
+python src/test/train_dummy.py
 ```
 
 ## Full ML Pipeline Overview
@@ -62,7 +62,7 @@ python src/train_dummy.py
                                       │
                                       ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                         1. Preprocessing Stage                        │
+│                         1. Preprocessing Stage                       │
 └──────────────────────────────────────────────────────────────────────┘
    • Load audio (librosa)
    • Resample to 44.1 kHz
@@ -72,7 +72,7 @@ python src/train_dummy.py
                                       │
                                       ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                     2. Feature Extraction (MFCCs)                     │
+│                     2. Feature Extraction (MFCCs)                    │
 └──────────────────────────────────────────────────────────────────────┘
    • Compute MFCCs (13 coefficients)
    • Shape: (n_mfcc, time_frames)
@@ -80,7 +80,7 @@ python src/train_dummy.py
                                       │
                                       ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                     3. Load Features & Metadata                       │
+│                     3. Load Features & Metadata                      │
 └──────────────────────────────────────────────────────────────────────┘
    • load_features.py:
        - Load MFCC .npy files
@@ -89,7 +89,7 @@ python src/train_dummy.py
                                       │
                                       ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                     4. Train/Test Split (Stratified)                  │
+│                     4. Train/Test Split (Stratified)                 │
 └──────────────────────────────────────────────────────────────────────┘
    • sklearn.train_test_split()
    • stratify=y to preserve class balance
@@ -101,7 +101,7 @@ python src/train_dummy.py
                                       │
                                       ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                         5. Model Architecture                          │
+│                         5. Model Architecture                        │
 └──────────────────────────────────────────────────────────────────────┘
    • AudioCNN (lightweight 2‑layer CNN)
    • Input: (batch, 1, 13, time_frames)
@@ -110,7 +110,7 @@ python src/train_dummy.py
                                       │
                                       ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                         6. Training & Tuning                          │
+│                         6. Training & Tuning                         │
 └──────────────────────────────────────────────────────────────────────┘
    • Loss: CrossEntropy
    • Optimiser: Adam
@@ -120,7 +120,7 @@ python src/train_dummy.py
                                       │
                                       ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                           7. Evaluation                               │
+│                           7. Evaluation                              │
 └──────────────────────────────────────────────────────────────────────┘
    • Accuracy
    • Confusion matrix
@@ -129,7 +129,7 @@ python src/train_dummy.py
                                       │
                                       ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                        8. Edge Deployment Prep                        │
+│                        8. Edge Deployment Prep                       │
 └──────────────────────────────────────────────────────────────────────┘
    • Quantisation (8‑bit)
    • Pruning
