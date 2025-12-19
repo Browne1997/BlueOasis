@@ -21,21 +21,18 @@ def extract_features(file_path, n_mfcc=13, n_fft=2048, hop_length=512):
     S_db = librosa.amplitude_to_db(np.abs(S), ref=np.max)
 
     # MFCCs
-    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc, n_fft=n_fft, hop_length=hop_length)
+    mfccs = librosa.feature.mfcc(
+        y=y, sr=sr, n_mfcc=n_mfcc, n_fft=n_fft, hop_length=hop_length
+    )
 
     return S_db, mfccs
 
 def process_dataset():
-    """Loop through all clips and save features."""
+    """Loop through all clips and save per-clip features only."""
     meta = pd.read_csv(META_FILE)
-
-    all_specs = []
-    all_mfccs = []
-    labels = []
 
     for idx, row in meta.iterrows():
         filename = row["filename"]
-        category = row["category"]
         file_path = os.path.join(AUDIO_DIR, filename)
 
         try:
@@ -49,20 +46,13 @@ def process_dataset():
             np.save(spec_path, S_db)
             np.save(mfcc_path, mfccs)
 
-            # Collect for dataset arrays
-            all_specs.append(S_db)
-            all_mfccs.append(mfccs)
-            labels.append(category)
+            print(f"Processed {filename}")
 
         except Exception as e:
             print(f"Error processing {filename}: {e}")
 
-    # Save combined arrays + labels
-    np.save(os.path.join(FEATURE_DIR, "all_specs.npy"), np.array(all_specs, dtype=object))
-    np.save(os.path.join(FEATURE_DIR, "all_mfccs.npy"), np.array(all_mfccs, dtype=object))
-    np.save(os.path.join(FEATURE_DIR, "labels.npy"), np.array(labels))
-
-    print(f"✅ Feature extraction complete. Saved to {FEATURE_DIR}")
+    print(f"✅ Feature extraction complete. Per-clip features saved to {FEATURE_DIR}")
 
 if __name__ == "__main__":
     process_dataset()
+
