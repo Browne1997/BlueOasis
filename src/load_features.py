@@ -33,7 +33,7 @@ def get_train_test(feature_type="mfcc", test_size=0.2, random_state=42):
     Build train/test split from per-clip features.
     """
     X, y = load_features(feature_type=feature_type)
-    return train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+    return train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
 if __name__ == "__main__":
     # Example usage
