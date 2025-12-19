@@ -29,7 +29,7 @@ venv\Scripts\activate      # Windows
 ```bash
 pip install -r requirements.txt
 ```
-4. Your folder structure should look like:
+4. ESC-50 data already downloaded 
 ```Code
 data/
  ├── raw/
@@ -37,7 +37,7 @@ data/
  │    └── meta/esc50.csv
  └── processed/
 ```
-ESC-50 data already downloaded 
+
 5. Run preprocessing + feature extraction
 ```bash
 python src/preprocessing.py
