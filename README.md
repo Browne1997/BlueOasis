@@ -222,6 +222,19 @@ Keep them as 2D “images” (for CNNs).
 
 Pad/truncate to a fixed length if needed.
 
+### Loading and Exploring Data
+This utilises visualisation.py and app.py and satisfies section 4 requirements by providing a simple we based app using the python library streamlit. 
+
+It allows comparison of raw, processed and extracted feature data in the form of:
+  - Spectograms
+  - Waveforms
+  
+
+To run app 
+> streamlit run src/app.py
+in browser run:
+http://localhost:8501
+
 ---
 
 ## Section 2: Data Splitting Strategy
@@ -331,7 +344,6 @@ Further improvements beyond representative classes over different instruments:
 
 
 ## Section 3: Model Architecture Selection 
-
 ### Model Architecture Section 
 Model Architecture
 For this project, I selected a lightweight Convolutional Neural Network (CNN) operating on MFCC features. This architecture is intentionally small and efficient, making it suitable for edge deployment on devices such as Raspberry Pi, Jetson Nano, or ARM‑based embedded systems.
@@ -502,60 +514,9 @@ Output shape (real MFCC): torch.Size([1, 50])
 Loss (real MFCC): 3.91
 Dummy training script completed successfully.
 ```
-
-## Section 4: Visualisation
-Web Application Features included
-File selector for .wav files in data/raw/.
-
-Waveform visualization.
-
-Spectrogram (STFT in dB).
-
-MFCC feature visualization.
-
-Audio playback in browser.
+---
 
 
-Raw audio (.wav) → load with librosa or torchaudio.
-
-Feature extraction → compute MFCCs (or spectrograms).
-
-Dataset pairing → each MFCC array is paired with its label (e.g. class ID).
-
-Data split → train/validation/test sets (careful to avoid leakage).
-
-Model input → MFCCs are fed into your CNN/RNN/Transformer as tensors.
-
-Training → model learns to map MFCC patterns → labels.
-
-Evaluation → accuracy, confusion matrix, etc.
 
 
-### visualisation script 
-✅ What this gives you
-File‑level exploration: Waveform, spectrogram, MFCC plots.
 
-Dataset‑level exploration: Class distribution and duration histograms.
-
-Reusable functions: Can be imported into app.py for interactive visualization.
-
-### app script 
-✅ What’s this gives you
-Uses metadata (esc50.csv) to list files instead of scanning the folder.
-
-Imports functions from preprocessing.py and visualization.py to keep code modular.
-
-Adds dataset-level plots: class distribution and clip duration histograms.
-
-Interactive file selector: lets you pick a clip, play it, and see waveform, spectrogram, and MFCCs.
-
-Random Sample button: Picks a random file from the dataset when clicked.
-
-Keeps the dropdown for manual selection, but adds a quick way to explore.
-
-Displays the filename above the audio player so you know what you’re listening to.
-
-To run app 
-> streamlit run src/app.py
-in browser run:
-http://localhost:8501
