@@ -138,55 +138,59 @@ python src/test/train_dummy.py
 
 ```
 
+---
 
 # Technical Assesment - detailed reasoning/answers 
-## Section 1: Loading & Exploring
-This is your exploratory data analysis (EDA) stage:
+## Section 1 and 4: Loading & Exploring
+This explains how the codes in both sections work/satisfy the requirements of the assesment.
 
-Load audio files with librosa or torchaudio.
+### Preprocessing (raw .wav → cleaned audio)
+The preprocessing stage prepares the raw ESC‑50 audio files for feature extraction. Although ESC‑50 is a clean and well‑curated dataset, this step ensures consistency across all clips and removes minor artefacts that could affect downstream MFCC extraction.
 
-Inspect metadata (esc50.csv) → check class distribution, folds, clip durations.
+The script (preprocessing.py) performs the following operations on every audio file:
+1. Load audio at a fixed sample rate
+  - All clips are loaded at 44.1 kHz
+  - Ensures consistent frequency resolution
+  - Avoids mismatched sampling rates during feature extraction
 
-Visualize:
+2. Convert to mono
+  - ESC‑50 clips are already mono, but this step guarantees consistency
+  - Prevents shape mismatches in downstream processing
 
-Waveforms (time domain).
+3. Trim leading and trailing silence
+  - Uses librosa.effects.trim()
+  - Removes silent padding that varies between recordings
+  - Ensures MFCCs reflect the actual sound event, not silence
 
-Spectrograms (frequency domain).
+4. Normalise amplitude
+  - Scales audio to the range [-1, 1]
+  - Prevents loud clips from dominating the model
+  - Reduces variance caused by different recording gain levels
 
-Histograms of clip lengths or class counts.
+5. Saves processed audio 
+  - data/processed/audio
 
-Document issues:
+#### Identifying Quality Issues & Artefacts
+Although ESC‑50 is high quality, I checked for:
+1. Duration inconsistencies
+  - All clips are ~5 seconds long
+  - Verified by sampling random files
+  - No duration anomalies detected
 
-Are some clips noisy, clipped, or silent?
+2. Silent padding
+  - Some clips contain small amounts of silence at the start or end
+  - Trimming removes this and ensures MFCCs represent the event itself
 
-Are classes imbalanced (ESC‑50 has 40 clips per class, so it’s balanced — but note if you subset)?
-Any sample rate inconsistencies? (ESC‑50 is standardized at 44.1 kHz, so you can mention that).
+3. Amplitude variation
+  - Some recordings are noticeably louder or quieter
+  - Normalisation ensures consistent dynamic range
 
-##⚙️ Preprocessing → ML Features
-This is the feature engineering stage:
+4. Background noise
+  - ESC‑50 includes natural environmental noise
+  - This is expected and not removed, as it is part of the class signal
 
-Convert raw .wav → MFCCs (or Mel spectrograms).
-
-Normalize features (per‑clip mean/variance).
-
-Pad or truncate to fixed length (ESC‑50 clips are all 5s, so you’re safe).
-
-Save features into data/processed/ for reuse.
-
-👉 For CNNs: treat MFCCs or spectrograms as 2D “images” (coefficients × time). 👉 For RNNs/Transformers: treat MFCCs as sequential feature vectors over time.
-
-### preprocessing script
-✅ What this script does
-Loads metadata (esc50.csv) and prints dataset stats.
-
-Explores: class distribution, clip durations, sample rates.
-
-Loads audio: returns waveform + sample rate.
-
-Extracts features: spectrograms and MFCCs.
-
-Documents: ESC‑50 is balanced (40 clips per class), clips are 5s long, sample rate is 44.1 kHz.
-
+5. Missing or corrupt files
+  - No missing or unreadable files were found during preprocessing
 
 
 ### feature extraction script
@@ -218,7 +222,7 @@ Keep them as 2D “images” (for CNNs).
 
 Pad/truncate to a fixed length if needed.
 
-
+---
 
 ## Section 2: Data Splitting Strategy
 ### Load features script overview
