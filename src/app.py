@@ -16,7 +16,7 @@ from visualisation import (
     plot_duration_distribution,
 )
 
-from preprocessing import extract_spectrogram, extract_mfcc
+from visualisation import extract_spectrogram, extract_mfcc
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW_AUDIO_DIR = os.path.join(BASE_DIR, "data", "raw", "audio")
@@ -98,14 +98,14 @@ if selected_file:
     # MFCC FEATURE TAB
     # -----------------------------
     with tab3:
-        st.subheader("Saved MFCC Feature File")
+        st.subheader("Extracted MFCC Feature File")
         mfcc_file = selected_file.replace(".wav", "_mfcc.npy")
         mfcc_path = os.path.join(FEATURE_DIR, mfcc_file)
 
         if os.path.exists(mfcc_path):
             mfcc = np.load(mfcc_path)
             st.write(f"MFCC shape: {mfcc.shape}")
-            st.pyplot(plot_mfcc(mfcc, title="Saved MFCCs"))
+            st.pyplot(plot_mfcc(mfcc, title="Heatmap of MFCCs"))
         else:
             st.warning("MFCC feature file not found. Run feature_extraction.py first.")
 

@@ -32,6 +32,18 @@ def load_mfcc_feature(filename):
         return np.load(path)
     return None
 
+def extract_spectrogram(y, sr, n_fft=2048, hop_length=512):
+    S = librosa.stft(y, n_fft=n_fft, hop_length=hop_length)
+    S_db = librosa.amplitude_to_db(np.abs(S), ref=np.max)
+    return S_db
+
+def extract_mfcc(y, sr, n_mfcc=13, n_fft=2048, hop_length=512):
+    mfccs = librosa.feature.mfcc(
+        y=y, sr=sr, n_mfcc=n_mfcc, n_fft=n_fft, hop_length=hop_length
+    )
+    return mfccs
+
+
 # -----------------------------
 # Plotting Functions
 # -----------------------------
@@ -49,10 +61,12 @@ def plot_spectrogram(S_db, sr, title="Spectrogram (dB)"):
     ax.set(title=title)
     return fig
 
-def plot_mfcc(mfccs, title="MFCCs"):
+def plot_mfcc(mfccs, title="Heatmap of MFCCs"):
     fig, ax = plt.subplots(figsize=(10, 3))
     img = librosa.display.specshow(mfccs, x_axis="time", ax=ax)
     fig.colorbar(img, ax=ax)
+    ax.set_xlabel("time (frames)")
+    ax.set_ylabel("MFCC coefficients (1–13)")
     ax.set(title=title)
     return fig
 
