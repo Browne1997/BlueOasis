@@ -6,12 +6,35 @@ import pandas as pd
 import os
 import numpy as np
 
-AUDIO_DIR = "data/raw/audio"
+RAW_AUDIO_DIR = "data/raw/audio"
+PROC_AUDIO_DIR = "data/processed/audio"
+FEATURE_DIR = "data/processed/features"
 META_FILE = "data/raw/meta/esc50.csv"
-PLOT_DIR = "data/processed/plots"
 
-# Ensure output directory exists
-os.makedirs(PLOT_DIR, exist_ok=True)
+# -----------------------------
+# Loading Helpers
+# -----------------------------
+
+def load_raw_audio(filename):
+    path = os.path.join(RAW_AUDIO_DIR, filename)
+    y, sr = librosa.load(path, sr=None)
+    return y, sr
+
+def load_processed_audio(filename):
+    path = os.path.join(PROC_AUDIO_DIR, filename)
+    y, sr = librosa.load(path, sr=None)
+    return y, sr
+
+def load_mfcc_feature(filename):
+    """Load MFCC .npy file saved during feature extraction."""
+    path = os.path.join(FEATURE_DIR, filename.replace(".wav", "_mfcc.npy"))
+    if os.path.exists(path):
+        return np.load(path)
+    return None
+
+# -----------------------------
+# Plotting Functions
+# -----------------------------
 
 def plot_waveform(y, sr, title="Waveform"):
     fig, ax = plt.subplots(figsize=(10, 3))
@@ -34,7 +57,6 @@ def plot_mfcc(mfccs, title="MFCCs"):
     return fig
 
 def plot_class_distribution():
-    """Plot histogram of class counts from metadata."""
     meta = pd.read_csv(META_FILE)
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.countplot(y="category", data=meta, order=meta['category'].value_counts().index, ax=ax)
@@ -42,11 +64,10 @@ def plot_class_distribution():
     return fig
 
 def plot_duration_distribution(sample_size=200):
-    """Plot histogram of clip durations (ESC-50 clips are ~5s)."""
     meta = pd.read_csv(META_FILE)
     durations = []
     for _, row in meta.sample(sample_size).iterrows():
-        file_path = os.path.join(AUDIO_DIR, row["filename"])
+        file_path = os.path.join(RAW_AUDIO_DIR, row["filename"])
         y, sr = librosa.load(file_path, sr=None)
         durations.append(len(y)/sr)
     fig, ax = plt.subplots(figsize=(8, 4))
@@ -54,34 +75,6 @@ def plot_duration_distribution(sample_size=200):
     ax.set(title="Clip Duration Distribution", xlabel="Duration (s)", ylabel="Count")
     return fig
 
-# ---------------- DEMO BLOCK ----------------
-if __name__ == "__main__":
-    print("Running visualization demo...")
-
-    # Load metadata
-    meta = pd.read_csv(META_FILE)
-
-    # Pick one example file
-    example_file = meta.iloc[0]["filename"]
-    file_path = os.path.join(AUDIO_DIR, example_file)
-    y, sr = librosa.load(file_path, sr=None)
-
-    # Compute features
-    S = librosa.stft(y)
-    S_db = librosa.amplitude_to_db(np.abs(S), ref=np.max)
-    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
-
-    # Build filename prefix based on clip name (without extension)
-    prefix = os.path.splitext(example_file)[0]
-
-    # Save plots to PLOT_DIR with descriptive names
-    plot_waveform(y, sr, title=f"Waveform: {example_file}").savefig(os.path.join(PLOT_DIR, f"{prefix}_waveform.png"))
-    plot_spectrogram(S_db, sr, title=f"Spectrogram: {example_file}").savefig(os.path.join(PLOT_DIR, f"{prefix}_spectrogram.png"))
-    plot_mfcc(mfccs, title=f"MFCCs: {example_file}").savefig(os.path.join(PLOT_DIR, f"{prefix}_mfccs.png"))
-    plot_class_distribution().savefig(os.path.join(PLOT_DIR, "class_distribution.png"))
-    plot_duration_distribution().savefig(os.path.join(PLOT_DIR, "duration_distribution.png"))
-
-    print(f"Plots saved to {PLOT_DIR}")
 
 
 
