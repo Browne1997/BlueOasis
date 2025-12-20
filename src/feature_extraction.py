@@ -5,7 +5,7 @@ import librosa
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-AUDIO_DIR = os.path.join(BASE_DIR, "data", "raw", "audio")
+AUDIO_DIR = os.path.join(BASE_DIR, "data", "processed", "audio")
 META_FILE = os.path.join(BASE_DIR, "data", "raw", "meta", "esc50.csv")
 FEATURE_DIR = os.path.join(BASE_DIR, "data", "processed", "features")
 
@@ -35,10 +35,13 @@ def process_dataset():
         filename = row["filename"]
         file_path = os.path.join(AUDIO_DIR, filename)
 
+        if not os.path.exists(file_path):
+            print(f"Skipping {filename} (processed audio not found)")
+            continue
+
         try:
             S_db, mfccs = extract_features(file_path)
 
-            # Save individual features as .npy
             prefix = os.path.splitext(filename)[0]
             spec_path = os.path.join(FEATURE_DIR, f"{prefix}_spec.npy")
             mfcc_path = os.path.join(FEATURE_DIR, f"{prefix}_mfcc.npy")
@@ -46,13 +49,14 @@ def process_dataset():
             np.save(spec_path, S_db)
             np.save(mfcc_path, mfccs)
 
-            print(f"Processed {filename}")
+            print(f"Processed {filename} | MFCC shape: {mfccs.shape}")
 
         except Exception as e:
             print(f"Error processing {filename}: {e}")
 
-    print(f"✅ Feature extraction complete. Per-clip features saved to {FEATURE_DIR}")
+    print(f"Feature extraction complete. Per-clip features saved to {FEATURE_DIR}")
 
 if __name__ == "__main__":
     process_dataset()
+
 
