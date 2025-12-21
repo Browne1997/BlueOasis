@@ -16,8 +16,8 @@ The pipeline includes:
 ## Task Setup Instructions
 1. Clone the repository
 ```bash
-git clone <your-repo-url>
-cd <your-repo-name>
+git clone <this-repo-url>
+cd <this-repo-name>
 ```
 2. Create and activate a virtual environment
 ```bash
@@ -29,11 +29,11 @@ venv\Scripts\activate      # Windows
 ```bash
 pip install -r requirements.txt
 ```
-4. ESC-50 data already downloaded 
+4. ESC-50 data already downloaded (cloned from https://github.com/karolpiczak/ESC-50?utm_source=copilot.com )
 ```Code
 data/
  ├── raw/
-│     ├── audio/
+ │    ├── audio/
  │    └── meta/esc50.csv
  └── processed/
 ```
@@ -159,7 +159,7 @@ python3 src/test/train_dummy.py
 ---
 
 # Detailed Pipeline Explanation & Reasoning  
-## Section 1 and 4: Loading & Exploring
+## Section 1 and 4: Loading, Exploring & Preprocessing
 This explains how the codes in both sections work/satisfy the requirements of the assesment.
 
 ### Preprocessing (raw .wav → cleaned audio)
@@ -601,8 +601,6 @@ Although full training and evaluation are outside the scope of this submission, 
 
 Overall, this project demonstrates a clean, modular, and production‑aligned approach to audio classification, with clear pathways for extension into full training, hyperparameter tuning, and deployment on edge hardware.
 
-# Data Source 
-https://github.com/karolpiczak/ESC-50?utm_source=copilot.com 
 
 ---
 
