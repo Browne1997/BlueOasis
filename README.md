@@ -91,7 +91,6 @@ python3 src/test/train_dummy.py
 └──────────────────────────────────────────────────────────────────────┘
    • Compute MFCCs (13 coefficients)
    • Raw shape: (13, time_frames)
-   • Pad/truncate to consistent shape: (13, 431)
    • Save as .npy files in data/processed/features/
                                       │
                                       ▼
@@ -101,6 +100,7 @@ python3 src/test/train_dummy.py
    • load_features.py:
        - Load MFCC .npy files
        - Load esc50.csv labels
+       - Pad/truncate to consistent shape: (13, 431)
        - Build X (features) and y (labels)
        - Ensure consistent padded MFCC shape
                                       │
