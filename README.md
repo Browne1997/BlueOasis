@@ -485,7 +485,7 @@ The model is trained on MFCC features extracted from each audio clip:
 
 MFCCs are chosen because they are compact, robust, and computationally inexpensive — ideal for edge devices.
 
-2. Training Loop
+2. Training Loop (Not coded as training not required for assesment)
 The model uses a standard supervised learning pipeline:
  - Loss function: Cross‑Entropy Loss
  - Optimiser: Adam
@@ -498,6 +498,7 @@ This setup provides a good balance between stability and speed, especially for s
 3. Regularisation
 To prevent overfitting the following was applied:
 - Dropout (0.3) 
+
 Additional things to explore but not implemented:
 - Early stopping — stop training when validation loss stops improving
 - Data augmentation, such as:
