@@ -485,7 +485,7 @@ The model is trained on MFCC features extracted from each audio clip:
 
 MFCCs are chosen because they are compact, robust, and computationally inexpensive — ideal for edge devices.
 
-2. Training Loop (Not coded as training not required for assesment)
+2. Training Loop (logic in train_dummy.py)
 The model uses a standard supervised learning pipeline:
  - Loss function: Cross‑Entropy Loss
  - Optimiser: Adam
